@@ -15,11 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::recPath(QString path) {
     ui->listWidget->addItem(path);
-    if(!findDetail[path]) return;
-    foreach(QFileInfo subFolder, QDir(path).entryInfoList()) {
-        if(!subFolder.isDir()) continue;
-        if(subFolder.absoluteFilePath().contains(".") || subFolder.absoluteFilePath() == path) continue;
-        recPath(subFolder.absoluteFilePath());
+    if((!findDetail[path]) || QFileInfo(path).isFile()) return;
+    foreach(QFileInfo subObj, QDir(path).entryInfoList()) {
+        if(subObj.absoluteFilePath().contains(".") || subObj.absoluteFilePath() == path) continue;
+        recPath(subObj.absoluteFilePath());
     }
 }
 
@@ -38,6 +37,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
+    if(QFileInfo(item->text()).isFile()) return;
     findDetail[item->text()] = !findDetail[item->text()];
     buildList();
 }
