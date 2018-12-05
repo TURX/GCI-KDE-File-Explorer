@@ -15,19 +15,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::recPath(QString path) {
     ui->listWidget->addItem(path);
-    if((!findDetail[path]) || QFileInfo(path).isFile()) return;
+    if(!(findDetail[path]) || QFileInfo(path).isFile()) return;
     foreach(QFileInfo subObj, QDir(path).entryInfoList()) {
-        if(subObj.absoluteFilePath().contains(".") || subObj.absoluteFilePath() == path) continue;
-        recPath(subObj.absoluteFilePath());
+        if(subObj.filePath().contains(".") || subObj.filePath() == path) continue;
+        recPath(subObj.filePath());
     }
 }
 
 void MainWindow::buildList() {
+    int lastIndex = ui->listWidget->currentIndex().row();
     ui->listWidget->clear();
     foreach (QFileInfo drive, QDir().drives()) {
-        findDetail[drive.absoluteFilePath()] = true;
-        recPath(drive.absoluteFilePath());
+        findDetail[drive.filePath()] = true;
+        recPath(drive.filePath());
     }
+    ui->listWidget->setCurrentRow(lastIndex);
 }
 
 MainWindow::~MainWindow()
